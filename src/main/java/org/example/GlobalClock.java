@@ -12,6 +12,7 @@ public class GlobalClock implements Runnable {
     private final static int WORK_DAY_START = 8;
     private final static int WORK_DAY_END = 22;
     private final static int SHIPMENT_DELIVERY_TIME = 9;
+    private final static int SPEED_MULTIPLIER = 20;
 
 
     private int hour = 7;
@@ -35,19 +36,19 @@ public class GlobalClock implements Runnable {
     }
 
     public boolean isWorkingTime() {
-        return this.hour >= 8 && this.hour <= 22;
+        return this.hour >= WORK_DAY_START && this.hour < WORK_DAY_END;
     }
 
     public boolean isWorkDayStart() {
-        if(this.hour == WORK_DAY_START && this.minute == 0) {
-            System.out.println("dadada");
-        }
-
         return this.hour == WORK_DAY_START && this.minute == 0;
     }
 
     public boolean isShipmentDeliveryTime() {
         return this.hour == SHIPMENT_DELIVERY_TIME && this.minute == 0;
+    }
+
+    public boolean isWorkDayEnd() {
+        return this.hour == WORK_DAY_END && this.minute == 0;
     }
 
     @Override
@@ -56,8 +57,11 @@ public class GlobalClock implements Runnable {
         while(true) {
             try {
                 System.out.printf("%d:%d\n", this.hour, this.minute);
-                Thread.sleep(Duration.ofSeconds(1).toMillis() / 4);
-                instance.addMinute();
+                Thread.sleep(Duration.ofSeconds(1).toMillis() / SPEED_MULTIPLIER);
+
+                synchronized (instance) {
+                    instance.addMinute();
+                }
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }

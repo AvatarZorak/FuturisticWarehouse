@@ -9,7 +9,6 @@ import java.util.*;
 
 @Getter
 @Setter
-//@NoArgsConstructor
 public class Warehouse implements Runnable {
     @Getter
     private static final Warehouse instance = new Warehouse();
@@ -24,6 +23,7 @@ public class Warehouse implements Runnable {
     private final Map<ContentType, Integer> lookupTable = new HashMap<>();
 
     private boolean areRobotsWorking = false;
+    private boolean isDeliveredToday = false;
 
     public Warehouse(){
         this.setLookupTable();
@@ -42,7 +42,6 @@ public class Warehouse implements Runnable {
 
         for(Robot r : this.robots) {
             Thread newRobot = new Thread(r);
-            System.out.print("da ");
             newRobot.start();
         }
     }
@@ -70,15 +69,25 @@ public class Warehouse implements Runnable {
     @SuppressWarnings("All")
     public void run() {
         while(true) {
-            if(GlobalClock.getInstance().isShipmentDeliveryTime()) {
-                this.shipmentPost.receiveDelivery();
-            }
+                synchronized (GlobalClock.getInstance()) {
+                    if(GlobalClock.getInstance().isShipmentDeliveryTime() && !this.isDeliveredToday) {
+                        this.shipmentPost.receiveDelivery();
+                        this.isDeliveredToday = true;
+                    }
 
-            if(GlobalClock.getInstance().isWorkDayStart() && !this.areRobotsWorking) {
-                System.out.println("yes");
-                this.startRobots();
-                this.areRobotsWorking = true;
-            }
+                    if(!GlobalClock.getInstance().isShipmentDeliveryTime()) {
+                        this.isDeliveredToday = false;
+                    }
+
+                    if(GlobalClock.getInstance().isWorkDayEnd()) {
+                        this.areRobotsWorking = false;
+                    }
+
+                    if(GlobalClock.getInstance().isWorkDayStart() && !this.areRobotsWorking) {
+                        this.startRobots();
+                        this.areRobotsWorking = true;
+                    }
+                }
         }
     }
 }

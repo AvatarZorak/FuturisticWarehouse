@@ -33,10 +33,12 @@ public class ShipmentPost {
     public void receiveDelivery() {
         Random randomNumberGenerator = new Random();
         int shipmentLowerBound = 1;
-        int shipmentUpperBound = 40;
+        int shipmentUpperBound = 100;
 
         int numberOfNewShipments = randomNumberGenerator
                 .nextInt(shipmentUpperBound - shipmentLowerBound) + shipmentLowerBound;
+
+        System.out.printf("%s new shipments have arrived at the shipment post.\n", numberOfNewShipments);
 
         for(int i = 0; i < numberOfNewShipments; i++) {
             ContentType newShipmentContentType = ContentType
@@ -44,7 +46,9 @@ public class ShipmentPost {
 
             Shipment newShipment = new Shipment(shipmentIdCounter++, newShipmentContentType);
 
-            this.addShipment(newShipment);
+            synchronized (this) {
+                this.addShipment(newShipment);
+            }
         }
     }
 }

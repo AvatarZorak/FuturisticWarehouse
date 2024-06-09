@@ -2,26 +2,16 @@ package org.example;
 
 //import lombok.AllArgsConstructor;
 //import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.Setter;
 import org.example.enums.ContentType;
 
 //@Getter
+@Getter
 @Setter
-//@AllArgsConstructor
+@AllArgsConstructor
 public class Shipment {
     private final Integer id;
     private final ContentType type;
-
-    public Shipment(Integer id, ContentType type) {
-        this.id = id;
-        this.type = type;
-    }
-
-    public ContentType getType() {
-        return type;
-    }
-
-    public Integer getId() {
-        return id;
-    }
 }

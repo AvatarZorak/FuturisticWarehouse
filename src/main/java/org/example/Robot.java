@@ -23,9 +23,17 @@ public class Robot implements Runnable {
         Semaphore shipmentPostSemaphore = Semaphores.getShipmentPostSemaphore();
         Semaphore storageSlotSemaphore = Semaphores.getStorageSlotSemaphore();
 
+        System.out.printf("%s is ready to work once more!\n", this.name);
+
         while(true){
             try {
-                if (clock.isWorkingTime()) {
+                boolean isWorkingTime;
+
+                synchronized (clock) {
+                    isWorkingTime = clock.isWorkingTime();
+                }
+
+                if (isWorkingTime) {
                     shipmentPostSemaphore.acquire();
 
                     Shipment shipment;
@@ -44,7 +52,7 @@ public class Robot implements Runnable {
                     int slotIndex = warehouse.getSlotIndex(shipment);
                     int timeToSlot = warehouse.getTimeToSlot(shipment);
 
-                    System.out.printf("%s has began walking towards slot %s(No. %d) to drop off shimpent №%d.\n"
+                    System.out.printf("%s has began walking towards slot %s(No. %d) to drop off shipment №%d.\n"
                             , this.name, shipment.getType().label, slotIndex, shipment.getId());
 
                     Thread.sleep(Duration.ofSeconds(timeToSlot).toMillis());
@@ -63,6 +71,7 @@ public class Robot implements Runnable {
 
                     Thread.sleep(Duration.ofSeconds(timeToSlot).toMillis());
                 } else {
+                    System.out.printf("%s has went to sleep in order to charge its battery.\n", this.name);
                     break;
                 }
             }
