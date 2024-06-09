@@ -62,9 +62,9 @@ public class Robot implements Runnable {
 
                     synchronized (currentSlot) {
                         currentSlot.add(shipment);
-                        System.out.printf("%s has dropped off shipment №%d and is heading towards the shipment post.\n"
-                                , this.name, shipment.getId());
                     }
+                    System.out.printf("%s has dropped off shipment №%d and is heading towards the shipment post.\n"
+                            , this.name, shipment.getId());
 
                     storageSlotSemaphore.release();
 
