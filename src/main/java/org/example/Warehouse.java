@@ -1,7 +1,6 @@
 package org.example;
 
 import lombok.Getter;
-//import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.enums.ContentType;
 
@@ -19,7 +18,7 @@ public class Warehouse implements Runnable {
     private final ShipmentPost shipmentPost = new ShipmentPost();
 
     private final List<Robot> robots = new LinkedList<>();
-    private final ArrayList<LinkedList<Shipment>> storageSlots = new ArrayList<>(10);
+    private final ArrayList<LinkedList<Shipment>> storageSlots = new ArrayList<>();
     private final Map<ContentType, Integer> lookupTable = new HashMap<>();
 
     private boolean areRobotsWorking = false;
