@@ -2,32 +2,24 @@ package org.example;
 
 import lombok.Getter;
 
-import java.time.Clock;
-import java.time.Duration;
-
 @Getter
-public class GlobalClock implements Runnable {
+public class GlobalClock {
 
     @Getter
-    private static final GlobalClock instance = new GlobalClock();
+    private static GlobalClock instance = new GlobalClock();
 
-    private Integer hour;
-    private Integer minute;
+    private Integer hour = 8;
+    private Integer minute = 0;
 
-    @Override
-    @SuppressWarnings("ALL")
-    public void run() {
-        while(true) {
-            try {
-                Thread.sleep(Duration.ofSeconds(1).toMillis());
-                this.addMinute();
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
+    public static GlobalClock getInstance() {
+        if (instance == null) {
+            instance = new GlobalClock();
         }
+
+        return instance;
     }
 
-    private void addMinute() {
+    void addMinute() {
         this.minute++;
 
         if(this.minute == 60) {
@@ -42,5 +34,9 @@ public class GlobalClock implements Runnable {
         if(this.hour == 24) {
             this.hour = 0;
         }
+    }
+
+    public boolean isWorkingTime(){
+        return this.hour >= 8 && this.hour <= 22;
     }
 }
